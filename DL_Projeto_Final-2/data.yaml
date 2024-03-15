@@ -1,0 +1,12 @@
+names:
+- Plaqueta
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: dl_projeto_final
+  url: https://universe.roboflow.com/ufrn-rr7ed/dl_projeto_final/dataset/2
+  version: 2
+  workspace: ufrn-rr7ed
+test: ../test/images
+train: train/images
+val: valid/images
