@@ -25,6 +25,3 @@ dataset = project.version(2).download("yolov8")
 #!pwd
 model = YOLO('yolov8n.pt')
 results = model.train(data='DL_Projeto_Final-2/data.yaml', epochs=100, imgsz=640)
-
-
-
