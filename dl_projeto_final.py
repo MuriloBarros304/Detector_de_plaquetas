@@ -1,51 +1,56 @@
 import cv2
 from ultralytics import YOLO
 
-# Load the pre-trained YOLOv5 model
+# detecção local usando yolov8n, devido à limitação de tamanho no GitHub o yolov8x usado no Colab não pode ser utilizado.
+
+# carregando arquivo de pesos pré-treinado no Colab
 model = YOLO('best.pt')
 
-# Function to perform object detection on a single frame
+# função que faz a detecção em cada frame
 def detect_objects(frame):
-    # Perform object detection on the frame
-    #frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    results = model.track(source=frame, conf=0.5, max_det=1, show_labels=False)
-
-    # Draw bounding boxes and labels on the frame
+    # converte para o formato de cores do frame de RGB para BGR
+    frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    # faz a detecção das dimensões do objeto
+    results = model.track(source=frame, conf=0.55, max_det=1)
+    # desenha um retângulo em cada frame com base nas dimensões obtidas pelo modelo
     for box in results[0].boxes:
         x1, y1, x2, y2 = box.xyxy[0]
-        cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-    #frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+        cv2.rectangle(frame_bgr, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
+    # converte de volta para RGB
+    frame = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
     #print(results)
     return frame 
 
-# Open the video file
+# abre o vídeo de teste
 video_path = 'video_teste2.mp4'
 cap = cv2.VideoCapture(video_path)
 
-# Create a VideoWriter object to save the output video
-output_path = 'output.mp4'
+# salva o resultado 
+output_path = 'video-resultado-local.mp4'
 fps = int(cap.get(cv2.CAP_PROP_FPS))
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 out = cv2.VideoWriter(output_path, fourcc, fps, (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 
-# Process each frame in the video
+# caso não seja criada uma janela, provavelmente haverá erro no Linux caso queira visualizar as detecções sendo feitas
+#cv2.namedWindow('frame')
+
+# aplicando frame a frame em um laço
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
 
-    # Perform object detection on the frame
+    # faz a detecção
     frame_with_detections = detect_objects(frame)
 
-    # Write the frame with detections to the output video
+    # salva cada frame
     out.write(frame_with_detections)
 
-    # Display the frame with detections (optional)
+    # visualizar detecções
     #cv2.imshow('frame', frame_with_detections)
     #if cv2.waitKey(1) & 0xFF == ord('q'):
         #break
     
-# Release the resources
 cap.release()
 out.release()
 cv2.destroyAllWindows()
