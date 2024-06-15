@@ -6,8 +6,10 @@ from ultralytics import YOLO
 # carregando arquivo de pesos pré-treinado no Colab
 model = YOLO('best.pt')
 
-# função que faz a detecção em cada frame
+
 def detect_objects(frame):
+    """Função que faz a detecção em cada frame"""
+    
     # converte para o formato de cores do frame de RGB para BGR
     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     # faz a detecção das dimensões do objeto
